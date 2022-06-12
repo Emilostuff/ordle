@@ -1,5 +1,7 @@
 import random
+from words import get_words
 
+WORD_LENGTH = 5
 MAX_TRIES = 6
 LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ"
 
@@ -35,8 +37,7 @@ def bold(word):
 
 if __name__ == '__main__':
     # load words
-    f = open('words.txt')
-    words = f.read().splitlines()
+    words = get_words(length=WORD_LENGTH, alphabet=LETTERS)
 
     # choose secret word
     word = random.choice(words)
@@ -72,7 +73,7 @@ if __name__ == '__main__':
             win = True
             break
 
-    # summary
+    # game summary
     if win:
         print(f"YOU WON!\n{attempts} attemps used.")
     else:

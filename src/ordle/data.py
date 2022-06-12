@@ -20,7 +20,7 @@ def get_words(data, length):
 
 
 if __name__ == '__main__':
-    with open('dictionary.txt') as f:
+    with open('data/dictionary.txt') as f:
         # get lines
         lines = f.readlines()
 
@@ -29,5 +29,5 @@ if __name__ == '__main__':
         print(f"Selected {len(words)} words")
 
         # store output
-        with open('words.txt', 'w') as f:
+        with open('data/words.txt', 'w') as f:
             f.write('\n'.join(words))

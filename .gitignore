@@ -1,4 +1,5 @@
-dictionary.txt
+# Generated files
+words*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
