@@ -8,3 +8,6 @@ Open a terminal window in the project directory and run:
 ```bash
 python3 src/ordle
 ```
+
+# Credits
+Thanks to The Society for Danish Language and Literature [DSL](dsl.dk) for providing access to their comprehensive list of Danish words.
