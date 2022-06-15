@@ -10,4 +10,4 @@ python3 src/ordle
 ```
 
 # Credits
-Thanks to The Society for Danish Language and Literature [DSL](dsl.dk) for providing access to their comprehensive list of Danish words.
+Thanks to The Society for Danish Language and Literature [DSL](https://dsl.dk) for providing access to their comprehensive list of Danish words.
