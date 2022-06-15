@@ -10,6 +10,7 @@ if __name__ == '__main__':
     game = Game(word_length=LENGTH, alphabet=ALPHABET, max_attempts=ATTEMPTS)
 
     # Print Title
+    ui.clear_screen()
     ui.print_title(caption="The Danish version of Wordle")
     ui.print_instructions(
         f"Guess the {LENGTH} letter word. You have {ATTEMPTS} attempts!")
@@ -19,7 +20,7 @@ if __name__ == '__main__':
     ui.print_line(len(ALPHABET))
 
     # Play the game
-    lines = 2
+    lines = 1
     while game.state == Game.State.ACTIVE:
         # Take a guess
         while True:

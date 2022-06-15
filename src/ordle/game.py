@@ -47,7 +47,7 @@ class Game:
 
     def make_guess(self, guess):
         guess = guess.upper()
-        if guess not in self.wordlist or guess in self.guesses:
+        if guess not in self.wordlist:
             return False
         elif self.state == Game.State.ACTIVE:
             self.__attempts += 1

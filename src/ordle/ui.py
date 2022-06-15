@@ -25,6 +25,10 @@ def bold(word):
     return f"\033[1m{word}\033[0m"
 
 
+def clear_screen():
+    print("\033[2J\033[H")
+
+
 def get_input():
     print(" > ", end="")
     user_input = input().upper()
@@ -58,20 +62,19 @@ def colorize(let):
 
 def print_letters(game, backtrack=0, end='\n', ):
     if backtrack > 0:
-        print(f"\033[{backtrack}A", end="")
+        print(f"\033[{backtrack}F", end="")
     for c in game.alphabet:
         print(bold(colorize(game.letters[c])), end="")
     print("", end=end)
     if backtrack > 0:
-        print(f"\033[{backtrack}B", end="")
+        print(f"\033[{backtrack}E", end="")
 
 
-def print_guess(game, end='\n'):
+def print_guess(game):
     print(cyan(f"{game.attempts_used()}: "), end="")
 
     for let in game.last_guess():
         print(bold(colorize(let)), end="")
-    print("", end=end)
 
 
 def print_line(length):
