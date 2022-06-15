@@ -1,33 +1,60 @@
+import os
+from os.path import exists
+from urllib.request import urlopen
+from io import BytesIO
+from zipfile import ZipFile
 
-def get_words(data, length):
-    # collect all valid {length}-letter words
-    valid = []
-    for line in lines:
-        # discard ending
-        x = line.split(";")[0]
 
-        # keep only the first of dublets
-        if x[0] == "1":
-            x = x[3:]
+def _extract_words(data, length, alphabet):
+    # returns all distinct, valid {length}-letter words
+    valid = set()
+    for line in data:
+        word = line.split("\t")[0].upper()
 
-        if not len(x) == length:
+        if not len(word) == length:
             continue
 
-        if all(c in "abcdefghijklmnopqrstuvwxyzæøå" for c in x):
-            valid.append(x.upper())
+        if all(c in alphabet for c in word):
+            valid.add(word)
 
-    return valid
+    return list(valid)
+
+
+def _fetch(url):
+    response = urlopen(url)
+    zipfile = ZipFile(BytesIO(response.read()))
+    file = zipfile.infolist()[0]
+    file.filename = "temp.txt"
+    zipfile.extract(file)
+
+    data = None
+    with open('temp.txt') as f:
+        data = f.read().splitlines()
+    os.remove('temp.txt')
+
+    return data
+
+
+def get_words(length, alphabet):
+    path = f'words{length}.txt'
+
+    # check if local copy exists
+    if exists(path):
+        f = open(path)
+        return f.read().splitlines()
+
+    # otherwise download wordlist
+    data = _fetch("https://korpus.dsl.dk/download/ddo-fullform.zip")
+
+    # process wordlist
+    words = _extract_words(data, length, alphabet)
+
+    # save words
+    with open(path, 'w') as out:
+        out.write('\n'.join(words))
+
+    return words
 
 
 if __name__ == '__main__':
-    with open('data/dictionary.txt') as f:
-        # get lines
-        lines = f.readlines()
-
-        # extract words
-        words = get_words(lines, length=5)
-        print(f"Selected {len(words)} words")
-
-        # store output
-        with open('data/words.txt', 'w') as f:
-            f.write('\n'.join(words))
+    get_words(5)

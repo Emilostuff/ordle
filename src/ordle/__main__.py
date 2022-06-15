@@ -1,5 +1,5 @@
 import random
-from words import get_words
+from data import get_words
 
 WORD_LENGTH = 5
 MAX_TRIES = 6
