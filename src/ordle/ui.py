@@ -40,6 +40,11 @@ def print_title(caption):
     print()
 
 
+def print_instructions(text):
+    print(cyan(text))
+    print()
+
+
 def colorize(let):
     if let.state == Letter.State.CORRECT:
         return green(let.value)
@@ -64,8 +69,8 @@ def print_letters(game, backtrack=0, end='\n', ):
 def print_guess(game, end='\n'):
     print(cyan(f"{game.attempts_used()}: "), end="")
 
-    for c in game.last_guess():
-        print(bold(colorize(game.letters[c])), end="")
+    for let in game.last_guess():
+        print(bold(colorize(let)), end="")
     print("", end=end)
 
 
@@ -77,8 +82,8 @@ def print_summary(game):
     print()
     if game.state == game.State.WIN:
         print(green("YOU WON! "), end="")
-        print(f"{game.attempts_used()} attemps used.")
+        print(f"{game.attempts_used()} attemps used")
     else:
         print(red("YOU LOST! "), end="")
-        print(f"The word was: {game.get_answer()}.")
+        print(f"The word was: {game.get_answer()}")
     print()

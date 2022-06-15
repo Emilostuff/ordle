@@ -27,25 +27,31 @@ class Game:
         self.__attempts = 0
         self.__word = random.choice(self.wordlist)
 
-    def __update(self):
-        for (i, c) in enumerate(self.last_guess()):
-            let = self.letters[c]
+    def __parse_guess(self, guess):
+        guess_letters = []
+        for (i, c) in enumerate(guess):
+            # evaluate guess letter
+            let = Letter(c)
             if c == self.__word[i]:
                 let.state = Letter.State.CORRECT
             elif c in self.__word:
-                if let.state != Letter.State.CORRECT:
-                    let.state = Letter.State.INCLUDED
+                let.state = Letter.State.INCLUDED
             else:
                 let.state = Letter.State.EXCLUDED
+            guess_letters.append(let)
+
+            # update overall letter status
+            self.letters[let.value].update_state(let)
+
+        self.guesses.append(guess_letters)
 
     def make_guess(self, guess):
         guess = guess.upper()
         if guess not in self.wordlist or guess in self.guesses:
             return False
         elif self.state == Game.State.ACTIVE:
-            self.guesses.append(guess)
-            self.__update()
             self.__attempts += 1
+            self.__parse_guess(guess)
 
             if guess == self.__word:
                 self.state = Game.State.WIN
@@ -56,7 +62,7 @@ class Game:
             return False
 
     def last_guess(self):
-        return self.guesses[-1] if len(self.guesses) > 0 else ""
+        return self.guesses[-1] if len(self.guesses) > 0 else []
 
     def attempts_used(self):
         return self.__attempts
