@@ -1,0 +1,68 @@
+import random
+from letter import Letter
+from enum import Enum
+from data import get_words
+
+
+class Game:
+    class State(Enum):
+        ACTIVE = 0
+        WIN = 1
+        DEFEAT = 2
+
+    def __init__(self, word_length, alphabet, max_attempts):
+        # Static setup
+        self.wordlist = get_words(length=word_length, alphabet=alphabet)
+        self.alphabet = alphabet.upper()
+        self.max_attemps = max_attempts
+
+        # Public state
+        self.state = Game.State.ACTIVE
+        self.guesses = []
+        self.letters = dict()
+        for c in alphabet:
+            self.letters[c] = Letter(c)
+
+        # Private state
+        self.__attempts = 0
+        self.__word = random.choice(self.wordlist)
+
+    def __update(self):
+        for (i, c) in enumerate(self.last_guess()):
+            let = self.letters[c]
+            if c == self.__word[i]:
+                let.state = Letter.State.CORRECT
+            elif c in self.__word:
+                if let.state != Letter.State.CORRECT:
+                    let.state = Letter.State.INCLUDED
+            else:
+                let.state = Letter.State.EXCLUDED
+
+    def make_guess(self, guess):
+        guess = guess.upper()
+        if guess not in self.wordlist or guess in self.guesses:
+            return False
+        elif self.state == Game.State.ACTIVE:
+            self.guesses.append(guess)
+            self.__update()
+            self.__attempts += 1
+
+            if guess == self.__word:
+                self.state = Game.State.WIN
+            elif self.__attempts >= self.max_attemps:
+                self.state = Game.State.DEFEAT
+            return True
+        else:
+            return False
+
+    def last_guess(self):
+        return self.guesses[-1] if len(self.guesses) > 0 else ""
+
+    def attempts_used(self):
+        return self.__attempts
+
+    def get_answer(self):
+        if self.state == Game.State.ACTIVE:
+            raise RuntimeError("Can't reveal answer while game is in progress")
+        else:
+            return self.__word

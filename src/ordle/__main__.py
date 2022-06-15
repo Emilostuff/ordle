@@ -1,80 +1,35 @@
-import random
-from data import get_words
+from game import Game
+import ui
 
-WORD_LENGTH = 5
-MAX_TRIES = 6
 LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ"
 
 
-def get_input(valid):
-    while True:
-        print(" > ", end="")
-        user_input = input().upper()
-        print("\033[F\033[2K\033[1G", end="")
-        if user_input in valid:
-            return user_input
-
-
-def green(word):
-    return f"\033[92m{word}\033[0m"
-
-
-def yellow(word):
-    return f"\033[93m{word}\033[0m"
-
-
-def black(word):
-    return f"\033[90m{word}\033[0m"
-
-
-def cyan(word):
-    return f"\033[96m{word}\033[0m"
-
-
-def bold(word):
-    return f"\033[1m{word}\033[0m"
-
-
 if __name__ == '__main__':
-    # load words
-    words = get_words(length=WORD_LENGTH, alphabet=LETTERS)
+    # setup game
+    game = Game(word_length=5, alphabet=LETTERS, max_attempts=6)
+    print(game._Game__word)
+    ui.print_title(caption="The Danish version of Wordle.")
 
-    # choose secret word
-    word = random.choice(words)
-
-    # status
-    attempts = 0
-    alphabet = [c for c in LETTERS]
-    win = False
+    # Print letter status
+    ui.print_letters(game, end="\n")
+    ui.print_line(len(LETTERS))
 
     # play the game
-    print("WELCOME TO ORDLE - THE DANISH VERSION OF WORDLE")
-    while attempts < MAX_TRIES:
-        attempts += 1
-        guess = get_input(words)
+    lines = 2
+    while game.state == Game.State.ACTIVE:
+        # Take a guess
+        while True:
+            user_input = ui.get_input()
+            if game.make_guess(user_input):
+                break
 
-        # print word with colors
-        print(cyan(f"{attempts}: "), end="")
-        for (i, c) in enumerate(guess):
-            out = black(c)
-            if c == word[i]:
-                out = green(c)
-            elif c in word:
-                out = yellow(c)
-            print(bold(out), end="")
-            alphabet[LETTERS.index(c)] = out
+        # Print result
+        ui.print_guess(game)
+        lines += 1
 
-        # print status
-        print(cyan("   STATUS: "), end="")
-        print("".join(alphabet))
-
-        # Check win
-        if guess == word:
-            win = True
-            break
+        # move back and reprint letter status
+        ui.print_letters(game, backtrack=lines, end="\n")
 
     # game summary
-    if win:
-        print(f"YOU WON!\n{attempts} attemps used.")
-    else:
-        print(f"YOU LOST!\nThe correct word was: {word}")
+    ui.print_line(len(LETTERS))
+    ui.print_summary(game)
