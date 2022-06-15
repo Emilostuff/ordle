@@ -28,7 +28,7 @@ def bold(word):
 def get_input():
     print(" > ", end="")
     user_input = input().upper()
-    print("\033[F\033[2K\033[1G", end="")
+    print("\033[F\033[2K", end="")
     return user_input
 
 
