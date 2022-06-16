@@ -14,7 +14,7 @@ class Game:
         # Static setup
         self.wordlist = get_words(length=word_length, alphabet=alphabet)
         self.alphabet = alphabet.upper()
-        self.max_attemps = max_attempts
+        self.max_attempts = max_attempts
 
         # Public state
         self.state = Game.State.ACTIVE
@@ -45,6 +45,17 @@ class Game:
 
         self.guesses.append(guess_letters)
 
+    def restart(self):
+        # Public state
+        self.state = Game.State.ACTIVE
+        self.guesses = []
+        for c in self.alphabet:
+            self.letters[c].state = Letter.State.UNKNOWN
+
+        # Private state
+        self.__attempts = 0
+        self.__word = random.choice(self.wordlist)
+
     def make_guess(self, guess):
         guess = guess.upper()
         if guess not in self.wordlist:
@@ -55,7 +66,7 @@ class Game:
 
             if guess == self.__word:
                 self.state = Game.State.WIN
-            elif self.__attempts >= self.max_attemps:
+            elif self.__attempts >= self.max_attempts:
                 self.state = Game.State.DEFEAT
             return True
         else:
