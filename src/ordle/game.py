@@ -15,6 +15,7 @@ class Game:
         self.wordlist = get_words(length=word_length, alphabet=alphabet)
         self.alphabet = alphabet.upper()
         self.max_attempts = max_attempts
+        self.word_length = word_length
 
         # Public state
         self.state = Game.State.ACTIVE
