@@ -150,7 +150,7 @@ if __name__ == '__main__':
                      8: "UTROLIGS"}
 
     # Setup the game
-    game = Game(word_length=5, alphabet=alphabet, max_attempts=6)
+    game = Game(word_length=7, alphabet=alphabet, max_attempts=6)
     bot = Bot(game)
 
     # play games
