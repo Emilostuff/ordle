@@ -20,6 +20,7 @@ class Bot:
         self.included = set()
         self.excluded = set()
         self.correct = [None] * self.word_length
+        self.incorrect = [set() for _ in range(self.word_length)]
         self.guesses = []
         self.game.restart()
 
@@ -56,6 +57,7 @@ class Bot:
         for (i, let) in enumerate(res):
             if let.state == Letter.State.INCLUDED:
                 self.included.add(let.value)
+                self.incorrect[i].add(let.value)
             elif let.state == Letter.State.EXCLUDED:
                 self.excluded.add(let.value)
             elif let.state == Letter.State.CORRECT:
@@ -68,15 +70,17 @@ class Bot:
                 for (i, c) in enumerate(word):
                     if self.correct[i] is not None and self.correct[i] != c:
                         return
+                    elif c in self.incorrect[i]:
+                        return
                     elif c in self.excluded:
                         return
                 for c in self.included:
                     if c not in word:
                         return
                 to_keep.append(word)
-                
+
             check()
-            
+
         self.candidates = to_keep
 
     def play(self, n):
@@ -122,9 +126,9 @@ class Bot:
 if __name__ == '__main__':
     ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ"
     # Setup the game
-    game = Game(word_length=5, alphabet=ALPHABET, max_attempts=12)
+    game = Game(word_length=5, alphabet=ALPHABET, max_attempts=10)
 
     # play games
     bot = Bot(game)
-    bot.play(200)
+    bot.play(1000)
     bot.print_stats()
