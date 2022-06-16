@@ -67,7 +67,7 @@ class Game:
 
             if guess == self.__word:
                 self.state = Game.State.WIN
-            elif self.__attempts >= self.max_attempts:
+            elif self.attempts_left() < 1:
                 self.state = Game.State.DEFEAT
             return True
         else:
@@ -78,6 +78,9 @@ class Game:
 
     def attempts_used(self):
         return self.__attempts
+
+    def attempts_left(self):
+        return self.max_attempts - self.__attempts
 
     def get_answer(self):
         if self.state == Game.State.ACTIVE:

@@ -9,11 +9,14 @@ class Info:
         self.correct = [None] * self.word_length
         self.incorrect = [set() for _ in range(self.word_length)]
         self.guesses = []
+        self.no_included = False
 
 
-def parse(game, info):
+def parse_guess(game, info):
+    info.no_included = True
     for (i, let) in enumerate(game.last_guess()):
         if let.state == Letter.State.INCLUDED:
+            info.no_included = False
             info.included.add(let.value)
             info.incorrect[i].add(let.value)
         elif let.state == Letter.State.EXCLUDED:
@@ -41,7 +44,7 @@ def filter(candidates, info):
     return to_keep
 
 
-def pick(candidates, info):
+def pick_best(candidates, info):
     # tally up character occurences
     chars = [dict()] * info.word_length
     for word in candidates:
@@ -70,3 +73,11 @@ def pick(candidates, info):
     for i in range(info.word_length, 1, -1):
         if i in best_words.keys():
             return best_words[i]
+
+
+def get_available_chars(candidates):
+    available = set()
+    for word in candidates:
+        for c in word:
+            available.add(c)
+    return available
