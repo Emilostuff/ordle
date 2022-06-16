@@ -134,7 +134,8 @@ class Bot:
         rate = wins / games * 100
         avr = attempts / wins
 
-        print(cyan("\nSUMMARY"))
+        print()
+        print(cyan("SUMMARY"))
         print("Success rate:", yellow(f"{rate:.1f}%"))
         print("Average attempts", yellow(f"{avr:.2f}"))
         print()
