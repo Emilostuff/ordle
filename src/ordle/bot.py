@@ -1,5 +1,6 @@
 from game import Game
 from letter import Letter
+from ui import print_guess, red, cyan, yellow
 
 
 class Result:
@@ -12,7 +13,7 @@ class Bot:
     def __init__(self, game):
         self.game = game
         self.results = []
-        self.word_length = len(self.game.wordlist)
+        self.word_length = len(self.game.wordlist[0])
         self.reset()
 
     def reset(self):
@@ -35,7 +36,9 @@ class Bot:
                     chars[i][c] = 1
 
         # score each word
-        best_score = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        best_score = dict()
+        for i in range(1, self.word_length + 1):
+            best_score[i] = 0
         best_words = dict()
 
         for word in self.candidates:
@@ -48,7 +51,7 @@ class Bot:
                 best_score[len(letters)] = score
                 best_words[len(letters)] = word
 
-        for i in range(5, 1, -1):
+        for i in range(self.word_length, 1, -1):
             if i in best_words.keys():
                 return best_words[i]
 
@@ -70,9 +73,7 @@ class Bot:
                 for (i, c) in enumerate(word):
                     if self.correct[i] is not None and self.correct[i] != c:
                         return
-                    elif c in self.incorrect[i]:
-                        return
-                    elif c in self.excluded:
+                    elif c in self.incorrect[i] or c in self.excluded:
                         return
                 for c in self.included:
                     if c not in word:
@@ -83,21 +84,34 @@ class Bot:
 
         self.candidates = to_keep
 
-    def play(self, n):
+    def play(self, n, first_guesses, show=True):
+        # check first guess
+        first_guess = first_guesses[self.word_length]
+        if len(first_guess) != self.word_length:
+            raise ValueError("First guess was the wrong length!")
+        if first_guess not in self.game.wordlist:
+            raise ValueError("First guess is not valid!")
+
+        # play n games
         for _ in range(n):
             self.reset()
-            guess = "RESAT"
+
+            guess = first_guess
             # Game loop
             for _ in range(self.game.max_attempts):
                 # make guess and check win
-                print(f"Chose: {guess} from {len(self.candidates)}")
                 game.make_guess(guess)
+                if show:
+                    print_guess(self.game)
+                    print("  ", end="")
                 self.guesses.append(guess)
+
                 if game.state != Game.State.ACTIVE:
                     win = game.state == Game.State.WIN
                     attempts = self.game.attempts_used()
                     self.results.append(Result(win, attempts))
-                    print(win, attempts)
+                    if show:
+                        print(red("[DEFEAT]") if not win else "")
                     break
 
                 # parse result and filter wordlist
@@ -120,15 +134,26 @@ class Bot:
         rate = wins / games * 100
         avr = attempts / wins
 
-        print(f"Won {rate:.1f}% of games. Used on average {avr:.2f} attempts")
+        print(cyan("\nSUMMARY"))
+        print("Success rate:", yellow(f"{rate:.1f}%"))
+        print("Average attempts", yellow(f"{avr:.2f}"))
+        print()
 
 
 if __name__ == '__main__':
-    ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ"
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ"
+    first_guesses = {4: "LERS",
+                     5: "SARTE",
+                     6: "ARTENS",
+                     7: "LORTENS",
+                     8: "UTROLIGS"}
+
     # Setup the game
-    game = Game(word_length=5, alphabet=ALPHABET, max_attempts=10)
+    game = Game(word_length=5, alphabet=alphabet, max_attempts=6)
+    bot = Bot(game)
 
     # play games
-    bot = Bot(game)
-    bot.play(1000)
+    bot.play(1000, first_guesses=first_guesses, show=True)
+
+    # get summary
     bot.print_stats()
