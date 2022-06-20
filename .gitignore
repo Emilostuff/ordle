@@ -1,5 +1,6 @@
 # Generated files
 words*.txt
+.vscode/
 
 # macOS
 .DS_Store

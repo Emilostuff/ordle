@@ -28,15 +28,15 @@ def _fetch(url):
     zipfile.extract(file)
 
     data = None
-    with open('temp.txt') as f:
+    with open("temp.txt") as f:
         data = f.read().splitlines()
-    os.remove('temp.txt')
+    os.remove("temp.txt")
 
     return data
 
 
 def get_words(length, alphabet):
-    path = f'words{length}.txt'
+    path = f"words{length}.txt"
 
     # check if local copy exists
     if exists(path):
@@ -50,11 +50,11 @@ def get_words(length, alphabet):
     words = _extract_words(data, length, alphabet)
 
     # save words
-    with open(path, 'w') as out:
-        out.write('\n'.join(words))
+    with open(path, "w") as out:
+        out.write("\n".join(words))
 
     return words
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_words(5)

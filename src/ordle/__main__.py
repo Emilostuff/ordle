@@ -5,7 +5,7 @@ ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ"
 LENGTH = 5
 ATTEMPTS = 6
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Setup the game
     game = Game(word_length=LENGTH, alphabet=ALPHABET, max_attempts=ATTEMPTS)
 
@@ -13,7 +13,8 @@ if __name__ == '__main__':
     ui.clear_screen()
     ui.print_title(caption="The Danish version of Wordle")
     ui.print_instructions(
-        f"Guess the {LENGTH} letter word. You have {ATTEMPTS} attempts!")
+        f"Guess the {LENGTH} letter word. You have {ATTEMPTS} attempts!"
+    )
 
     # Print letter status first time
     ui.print_letters(game, end="\n")

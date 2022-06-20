@@ -1,5 +1,7 @@
 from letter import Letter
 
+INDENT = 20
+
 
 def green(word):
     return f"\033[92m{word}\033[0m"
@@ -11,6 +13,10 @@ def yellow(word):
 
 def black(word):
     return f"\033[90m{word}\033[0m"
+
+
+def blue(word):
+    return f"\033[94m{word}\033[0m"
 
 
 def cyan(word):
@@ -60,7 +66,7 @@ def colorize(let):
         return let.value
 
 
-def print_letters(game, backtrack=0, end='\n', ):
+def print_letters(game, backtrack=0, end="\n"):
     if backtrack > 0:
         print(f"\033[{backtrack}F", end="")
     for c in game.alphabet:
@@ -78,6 +84,18 @@ def print_guess(game, number=-1):
 
     for let in game.guesses[number]:
         print(bold(colorize(let)), end="")
+
+
+def print_game_word(word):
+    print(blue(word.rjust(INDENT)))
+
+
+def print_inline_game(game, player):
+    print(black(player.rjust(INDENT)), end=" | ")
+    for i in range(game.attempts_used()):
+        print_guess(game, number=i)
+        print("  ", end="")
+    print(red("[DEFEAT]") if not game.state == game.State.WIN else "")
 
 
 def print_line(length):

@@ -46,7 +46,9 @@ class Game:
 
         self.guesses.append(guess_letters)
 
-    def restart(self, seed=None):
+    def restart(self, word=None):
+        word = word.upper()
+
         # Public state
         self.state = Game.State.ACTIVE
         self.guesses = []
@@ -55,10 +57,12 @@ class Game:
 
         # Private state
         self.__attempts = 0
-        if seed is None:
-            self.__word = self.wordlist[seed % len(self.wordlist)]
-        else:
+        if word is None:
             self.__word = random.choice(self.wordlist)
+        elif word in self.wordlist:
+            self.__word = word
+        else:
+            raise ValueError("Game restarted with invalid word.")
 
     def make_guess(self, guess):
         guess = guess.upper()
