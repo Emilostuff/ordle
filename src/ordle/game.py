@@ -46,7 +46,7 @@ class Game:
 
         self.guesses.append(guess_letters)
 
-    def restart(self):
+    def restart(self, seed=None):
         # Public state
         self.state = Game.State.ACTIVE
         self.guesses = []
@@ -55,7 +55,10 @@ class Game:
 
         # Private state
         self.__attempts = 0
-        self.__word = random.choice(self.wordlist)
+        if seed is None:
+            self.__word = self.wordlist[seed % len(self.wordlist)]
+        else:
+            self.__word = random.choice(self.wordlist)
 
     def make_guess(self, guess):
         guess = guess.upper()
@@ -87,3 +90,9 @@ class Game:
             raise RuntimeError("Can't reveal answer while game is in progress")
         else:
             return self.__word
+
+    def guessed_words(self):
+        words = []
+        for g in self.guesses:
+            words.append("".join(let.value for let in g))
+        return words

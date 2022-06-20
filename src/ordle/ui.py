@@ -70,10 +70,13 @@ def print_letters(game, backtrack=0, end='\n', ):
         print(f"\033[{backtrack}E", end="")
 
 
-def print_guess(game):
-    print(cyan(f"{game.attempts_used()}: "), end="")
+def print_guess(game, number=-1):
+    if number == -1:
+        print(cyan(f"{game.attempts_used()}: "), end="")
+    else:
+        print(cyan(f"{number + 1}: "), end="")
 
-    for let in game.last_guess():
+    for let in game.guesses[number]:
         print(bold(colorize(let)), end="")
 
 

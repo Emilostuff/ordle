@@ -13,6 +13,12 @@ class Info:
 
 
 def parse_guess(game, info):
+    """_summary_
+
+    Args:
+        game (_type_): _description_
+        info (_type_): _description_
+    """
     info.no_included = True
     for (i, let) in enumerate(game.last_guess()):
         if let.state == Letter.State.INCLUDED:
@@ -44,15 +50,20 @@ def filter(candidates, info):
     return to_keep
 
 
-def pick_best(candidates, info):
-    # tally up character occurences
+def tally(words, info):
     chars = [dict()] * info.word_length
-    for word in candidates:
+    for word in words:
         for (i, c) in enumerate(word):
             if c in chars[i]:
                 chars[i][c] += 1
             else:
                 chars[i][c] = 1
+    return chars
+
+
+def pick_best(candidates, info):
+    # tally up character occurences
+    chars = tally(candidates, info)
 
     # score each word
     best_score = dict()
