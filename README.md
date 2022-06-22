@@ -1,5 +1,7 @@
 # ORDLE
-A command line implementation of Wordle in Danish. You can either play the game yourself, or you can try to write a bot that plays the game (pleasant testing environment included).
+A command line implementation of Wordle in Danish. 
+
+You can either **play the game yourself** or try to **write a bot that plays the game** (can you beat my bot?).
 
 <img src="https://i.imgur.com/3cpl4DZ.gif" width="600"/>
 
@@ -10,12 +12,51 @@ python3 src/ordle
 ```
 
 # How to Make Your Own Bot
-1. Make a new file and implement a class that inherits from ```Bot```. 
-2. Implement the ```play()``` method to make your bot play a game.
-3. Add your bot class to the list of ```BOTS``` in ```__main__.py```.
-4. run: ```python3 src/ordle test [number of tests]``` to see how your bot performs.
+Make a new file in ```/bots``` and define a class that inherits from ```Bot```:
+```python
+from bot import Bot
 
-Can you beat my bot?
+class MyBot(Bot):
+    def play(self, game: Game):
+        # your fancy algorithm
+```
+Then implement the ```play()``` method to make your bot play a game.
+
+(hint: take a look at the ```Game``` class).
+
+# Testing Your Bot
+### Setup
+In ```__main__.py``` import your bot and set it as BOT_UNDER_DEV:
+```python
+from bots.my_bot import MyBot
+
+[...]
+
+BOT_UNDER_DEV = MyBot
+```
+
+### Running Tests
+To test your bot, run one of the following commands:
+- ```python3 src/ordle -t``` to see how your bot performs against existing bot(s).
+- ```python3 src/ordle -t -dev``` to exclusively test your bot (faster).
+
+If your bot performs well, open a pull request to add it to the repo.
+
+### Advanced Options
+For more options consult help: ```python3 src/ordle -h```:
+```
+options:
+  -h, --help  show this help message and exit
+  -t          Run in test mode
+  -dev        Test only bot under development
+  -n N        Number of games to be played in test mode
+  -show       Show games in test mode
+  -seed SEED  Use specific seed in test mode
+  ```
+
+
+
+
 
 
 # Credits

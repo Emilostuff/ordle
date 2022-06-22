@@ -34,7 +34,7 @@ class BotTester:
                 name = bot.get_name()
                 self.game._Game__restart(word=word)
                 bot.play(self.game)
-                if self.game.state == Game.State.ACTIVE:
+                if self.game.get_state() == Game.State.ACTIVE:
                     raise RuntimeError(f"Bot {name} did not complete the game.")
 
                 if show:
@@ -42,7 +42,7 @@ class BotTester:
 
                 self.stats[bot].append(
                     BotTester.Result(
-                        self.game.state == Game.State.WIN, self.game.attempts_used()
+                        self.game.get_state() == Game.State.WIN, self.game.attempts_used()
                     )
                 )
         self.summary()
@@ -59,4 +59,4 @@ class BotTester:
         rates = [n / games * 100 for n in wins]
         averages = [a / w for (a, w) in zip(attempts, wins)]
         # print
-        print_stats(names, rates, averages, self.game)
+        print_stats(names, rates, averages, games, self.game)

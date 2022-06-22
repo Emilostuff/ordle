@@ -108,7 +108,7 @@ def print_inline_game(game, player):
     if len(player) > INDENT:
         player = f"{player[0: INDENT - 3]}..."
     player = player.rjust(INDENT)
-    name = red(player) if not game.state == game.State.WIN else green(player)
+    name = red(player) if not game.get_state() == game.State.WIN else green(player)
     print(black(name), end=black(" | "))
     for i in range(game.attempts_used()):
         print_guess(game, number=i)
@@ -122,7 +122,7 @@ def print_line(length, color=black):
 
 def print_summary(game):
     print()
-    if game.state == game.State.WIN:
+    if game.get_state() == game.State.WIN:
         print(green("YOU WON! "), end="")
         print(f"{game.attempts_used()} attemps used")
     else:
@@ -131,9 +131,11 @@ def print_summary(game):
     print()
 
 
-def print_stats(names, win_rates, averages, game):
+def print_stats(names, win_rates, averages, n, game):
     print()
-    print_word_line("SUMMARY", game)
+    print()
+    print_word_line(f"SUMMARY ({n} games played)", game)
+    print()
     print("Bot Name".rjust(INDENT), end=black(" | "))
     print("Success Rate".ljust(12), end=black(" | "))
     print("Average Attempts")

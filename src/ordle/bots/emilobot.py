@@ -108,7 +108,7 @@ class EmiloBot(Bot):
             info.guesses.append(guess)
 
             # check for game over
-            if game.state != Game.State.ACTIVE:
+            if game.get_state() != Game.State.ACTIVE:
                 return
 
             # parse result and filter wordlist
