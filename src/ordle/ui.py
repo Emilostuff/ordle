@@ -142,5 +142,4 @@ def print_stats(names, win_rates, averages, game):
         print(yellow(names[i].rjust(INDENT)), end=black(" | "))
         print(yellow(f"{win_rates[i]:.1f}%".ljust(12)), end=black(" | "))
         print(yellow(f"{averages[i]:.2f}"))
-
     print()

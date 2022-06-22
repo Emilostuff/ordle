@@ -5,13 +5,12 @@ from typing import Type
 from ui import print_inline_game, print_game_word, print_stats
 
 
-class Result:
-    def __init__(self, win, attempts):
-        self.win = win
-        self.attempts = attempts
-
-
 class BotTester:
+    class Result:
+        def __init__(self, win, attempts):
+            self.win = win
+            self.attempts = attempts
+
     def __init__(self, game, bot_classes: list[Type[Bot]]):
         self.game = game
         self.bots = [bot() for bot in bot_classes]
@@ -33,7 +32,7 @@ class BotTester:
 
             for bot in self.bots:
                 name = bot.get_name()
-                self.game.restart(word=word)
+                self.game._Game__restart(word=word)
                 bot.play(self.game)
                 if self.game.state == Game.State.ACTIVE:
                     raise RuntimeError(f"Bot {name} did not complete the game.")
@@ -42,8 +41,11 @@ class BotTester:
                     print_inline_game(self.game, name)
 
                 self.stats[bot].append(
-                    Result(self.game.state == Game.State.WIN, self.game.attempts_used())
+                    BotTester.Result(
+                        self.game.state == Game.State.WIN, self.game.attempts_used()
+                    )
                 )
+        self.summary()
 
     def summary(self):
         # calculate statistics

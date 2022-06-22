@@ -1,7 +1,6 @@
 from bot import Bot
 from game import Game
 from letter import Letter
-from bot_tester import BotTester
 
 
 class Info:
@@ -16,12 +15,6 @@ class Info:
 
 
 def parse_guess(game, info):
-    """_summary_
-
-    Args:
-        game (_type_): _description_
-        info (_type_): _description_
-    """
     info.no_included = True
     for (i, let) in enumerate(game.last_guess()):
         if let.state == Letter.State.INCLUDED:
@@ -98,7 +91,7 @@ def get_available_chars(candidates):
     return available
 
 
-class MyBot(Bot):
+class EmiloBot(Bot):
     def play(self, game):
         candidates = game.wordlist
         info = Info(game)
@@ -141,18 +134,3 @@ class MyBot(Bot):
 
             # otherwise make normal guess
             guess = pick_best(candidates, info)
-
-
-if __name__ == "__main__":
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ"
-    word_length = 5
-
-    # Setup the game
-    game = Game(word_length=word_length, alphabet=alphabet, max_attempts=6)
-    tester = BotTester(game, [MyBot, MyBot])
-
-    # play games
-    tester.run(100, show=True, seed=1)
-
-    # get summary
-    tester.summary()

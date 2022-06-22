@@ -17,16 +17,7 @@ class Game:
         self.max_attempts = max_attempts
         self.word_length = word_length
 
-        # Public state
-        self.state = Game.State.ACTIVE
-        self.guesses = []
-        self.letters = dict()
-        for c in alphabet:
-            self.letters[c] = Letter(c)
-
-        # Private state
-        self.__attempts = 0
-        self.__word = random.choice(self.wordlist)
+        self.__restart()
 
     def __parse_guess(self, guess):
         guess_letters = []
@@ -46,20 +37,21 @@ class Game:
 
         self.guesses.append(guess_letters)
 
-    def restart(self, word=None):
-        word = word.upper()
+    def __restart(self, word=None):
 
         # Public state
         self.state = Game.State.ACTIVE
         self.guesses = []
+        self.letters = dict()
         for c in self.alphabet:
-            self.letters[c].state = Letter.State.UNKNOWN
+            self.letters[c] = Letter(c)
 
         # Private state
         self.__attempts = 0
         if word is None:
             self.__word = random.choice(self.wordlist)
         elif word in self.wordlist:
+            word = word.upper()
             self.__word = word
         else:
             raise ValueError("Game restarted with invalid word.")
@@ -94,9 +86,3 @@ class Game:
             raise RuntimeError("Can't reveal answer while game is in progress")
         else:
             return self.__word
-
-    def guessed_words(self):
-        words = []
-        for g in self.guesses:
-            words.append("".join(let.value for let in g))
-        return words
