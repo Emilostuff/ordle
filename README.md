@@ -22,8 +22,8 @@ class MyBot(Bot):
 ```
 Then implement the ```play()``` method to make your bot play a game.
 
-### Help
-The learn the game interface, start by taking a look at the ```Game``` class.
+### Guidance
+The get familiar with the game interface, start by taking a look at the ```Game``` class.
 
 You can also take a inspiration from my bot ```EmiloBot```, but be careful - it might ruin the fun of inventing your own.
 
