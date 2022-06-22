@@ -42,7 +42,8 @@ class BotTester:
 
                 self.stats[bot].append(
                     BotTester.Result(
-                        self.game.get_state() == Game.State.WIN, self.game.attempts_used()
+                        self.game.get_state() == Game.State.WIN,
+                        self.game.attempts_used(),
                     )
                 )
         self.summary()
@@ -57,6 +58,7 @@ class BotTester:
             for bot in self.bots
         ]
         rates = [n / games * 100 for n in wins]
-        averages = [a / w for (a, w) in zip(attempts, wins)]
+        averages = [a / w if w > 0 else None for (a, w) in zip(attempts, wins)]
+
         # print
         print_stats(names, rates, averages, games, self.game)
