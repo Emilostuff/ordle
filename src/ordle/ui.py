@@ -1,6 +1,6 @@
 from letter import Letter
 
-INDENT = 20
+INDENT = 14
 
 
 def green(word):
@@ -86,20 +86,38 @@ def print_guess(game, number=-1):
         print(bold(colorize(let)), end="")
 
 
-def print_game_word(word):
-    print(blue(word.rjust(INDENT)))
+def calc_line_width(word_length, attempts):
+    return INDENT + (word_length + 5) * attempts + 1
+
+
+def print_game_word(word, attempts):
+    word_length = len(word)
+    print(bold(black(f"{word}")), end=" ")
+    print_line(calc_line_width(word_length, attempts) - word_length - 1)
+
+
+def print_word_line(word, game):
+    print(bold(cyan(f"{word}")), end=" ")
+    print_line(
+        calc_line_width(game.word_length, game.max_attempts) - len(word) - 1,
+        color=cyan,
+    )
 
 
 def print_inline_game(game, player):
-    print(black(player.rjust(INDENT)), end=" | ")
+    if len(player) > INDENT:
+        player = f"{player[0: INDENT - 3]}..."
+    player = player.rjust(INDENT)
+    name = red(player) if not game.state == game.State.WIN else green(player)
+    print(black(name), end=black(" | "))
     for i in range(game.attempts_used()):
         print_guess(game, number=i)
         print("  ", end="")
-    print(red("[DEFEAT]") if not game.state == game.State.WIN else "")
+    print()
 
 
-def print_line(length):
-    print(black(bold("\u2015" * length)))
+def print_line(length, color=black):
+    print(color(bold("\u2015" * length)))
 
 
 def print_summary(game):
@@ -110,4 +128,19 @@ def print_summary(game):
     else:
         print(red("YOU LOST! "), end="")
         print(f"The word was: {game.get_answer()}")
+    print()
+
+
+def print_stats(names, win_rates, averages, game):
+    print()
+    print_word_line("SUMMARY", game)
+    print("Bot Name".rjust(INDENT), end=black(" | "))
+    print("Success Rate".ljust(12), end=black(" | "))
+    print("Average Attempts")
+
+    for i in range(len(names)):
+        print(yellow(names[i].rjust(INDENT)), end=black(" | "))
+        print(yellow(f"{win_rates[i]:.1f}%".ljust(12)), end=black(" | "))
+        print(yellow(f"{averages[i]:.2f}"))
+
     print()

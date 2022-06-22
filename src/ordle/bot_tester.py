@@ -2,7 +2,13 @@ import random
 from game import Game
 from bot import Bot
 from typing import Type
-from ui import print_inline_game, print_game_word, yellow, cyan
+from ui import print_inline_game, print_game_word, print_stats
+
+
+class Result:
+    def __init__(self, win, attempts):
+        self.win = win
+        self.attempts = attempts
 
 
 class BotTester:
@@ -23,7 +29,7 @@ class BotTester:
         # Play n games with all bots
         for word in words:
             if show:
-                print_game_word(word)
+                print_game_word(word, self.game.max_attempts)
 
             for bot in self.bots:
                 name = bot.get_name()
@@ -36,24 +42,19 @@ class BotTester:
                     print_inline_game(self.game, name)
 
                 self.stats[bot].append(
-                    BotTester.Result(
-                        self.game.state == Game.State.WIN, self.game.attempts_used()
-                    )
+                    Result(self.game.state == Game.State.WIN, self.game.attempts_used())
                 )
 
-    class Result:
-        def __init__(self, win, attempts):
-            self.win = win
-            self.attempts = attempts
-
-    def print_stats(self):
-        games = len(self.results)
-        wins = sum(int(res.win) for res in self.results)
-        attempts = sum(int(res.attempts) for res in self.results if res.win)
-        rate = wins / games * 100
-        avr = attempts / wins
-        print()
-        print(cyan("SUMMARY"))
-        print("Success rate:", yellow(f"{rate:.1f}%"))
-        print("Average attempts", yellow(f"{avr:.2f}"))
-        print()
+    def summary(self):
+        # calculate statistics
+        games = len(next(iter(self.stats.values())))
+        names = [bot.get_name() for bot in self.bots]
+        wins = [sum(int(res.win) for res in self.stats[bot]) for bot in self.bots]
+        attempts = [
+            sum(int(res.attempts) for res in self.stats[bot] if res.win)
+            for bot in self.bots
+        ]
+        rates = [n / games * 100 for n in wins]
+        averages = [a / w for (a, w) in zip(attempts, wins)]
+        # print
+        print_stats(names, rates, averages, self.game)

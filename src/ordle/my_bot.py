@@ -149,10 +149,10 @@ if __name__ == "__main__":
 
     # Setup the game
     game = Game(word_length=word_length, alphabet=alphabet, max_attempts=6)
-    tester = BotTester(game, [MyBot])
+    tester = BotTester(game, [MyBot, MyBot])
 
     # play games
     tester.run(100, show=True, seed=1)
 
     # get summary
-    # tester.print_stats()
+    tester.summary()
