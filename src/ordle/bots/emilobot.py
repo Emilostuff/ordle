@@ -11,14 +11,14 @@ class Info:
         self.correct = [None] * self.word_length
         self.incorrect = [set() for _ in range(self.word_length)]
         self.guesses = []
-        self.no_included = False
+        self.no_yellow = False
 
 
-def parse_guess(game, info):
-    info.no_included = True
+def update_info(game, info):
+    info.no_yellow = True
     for (i, let) in enumerate(game.last_guess()):
         if let.state == Letter.State.INCLUDED:
-            info.no_included = False
+            info.no_yellow = False
             info.included.add(let.value)
             info.incorrect[i].add(let.value)
         elif let.state == Letter.State.EXCLUDED:
@@ -70,13 +70,16 @@ def pick_best(candidates, info):
 
     for word in candidates:
         score = 0
-        letters = set()
+        matching_letters = set()
         for (i, c) in enumerate(word):
-            score += chars[i][c]
-            letters.add(c)
-        if score > best_score[len(letters)] and word not in info.guesses:
-            best_score[len(letters)] = score
-            best_words[len(letters)] = word
+            if c not in info.excluded:
+                score += chars[i][c]
+                matching_letters.add(c)
+        if len(matching_letters) < 1:
+            continue
+        if score > best_score[len(matching_letters)] and word not in info.guesses:
+            best_score[len(matching_letters)] = score
+            best_words[len(matching_letters)] = word
 
     for i in range(info.word_length, 1, -1):
         if i in best_words.keys():
@@ -93,30 +96,31 @@ def get_available_chars(candidates):
 
 class EmiloBot(Bot):
     def play(self, game):
+        # setup
         candidates = game.wordlist
         info = Info(game)
 
-        # first guess
+        # save first guess (since it will not change)
         if not hasattr(self, "first_guess"):
             self.first_guess = pick_best(candidates, info)
         guess = self.first_guess
 
         # Game loop
         for _ in range(game.max_attempts):
-            # make guess and check win
+            # make guess
             game.make_guess(guess)
-            info.guesses.append(guess)
 
             # check for game over
             if game.get_state() != Game.State.ACTIVE:
                 return
 
             # parse result and filter wordlist
-            parse_guess(game, info)
+            info.guesses.append(guess)
+            update_info(game, info)
             candidates = filter_valid(candidates, info)
 
             # pick a new guess
-            if info.no_included and game.attempts_left() > 1:
+            if info.no_yellow and game.attempts_left() > 1:
                 # guess entirely new letters
                 temp_info = Info(game)
                 available = get_available_chars(candidates)
@@ -127,8 +131,7 @@ class EmiloBot(Bot):
                     if c not in available:
                         temp_info.excluded.add(c)
 
-                words = filter_valid(game.wordlist, temp_info)
-                guess = pick_best(words, temp_info)
+                guess = pick_best(game.wordlist, temp_info)
                 if guess is not None:
                     continue
 
