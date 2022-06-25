@@ -15,10 +15,15 @@ python3 src/ordle
 Make a new file in ```/bots``` and define a class that inherits from ```Bot```:
 ```python
 from bot import Bot
+from game import Game
+
 
 class MyBot(Bot):
     def play(self, game: Game):
-        # your fancy algorithm
+        # replace this with your fancy algorithm:
+        while game.get_state() == Game.State.ACTIVE:
+            game.make_guess("PESTO")
+
 ```
 Then implement the ```play()``` method to make your bot play a game.
 

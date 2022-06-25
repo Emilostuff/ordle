@@ -3,6 +3,7 @@ from game import Game
 from bot import Bot
 from typing import Type
 from ui import print_inline_game, print_game_word, print_stats
+from copy import deepcopy
 
 
 class BotTester:
@@ -27,23 +28,26 @@ class BotTester:
 
         # Play n games with all bots
         for word in words:
+            # construct game with the chosen word
+            self.game._Game__restart(word=word)
+
             if show:
                 print_game_word(word, self.game.max_attempts)
 
             for bot in self.bots:
                 name = bot.get_name()
-                self.game._Game__restart(word=word)
-                bot.play(self.game)
-                if self.game.get_state() == Game.State.ACTIVE:
+                bot_game = deepcopy(self.game)
+                bot.play(bot_game)
+                if bot_game.get_state() == Game.State.ACTIVE:
                     raise RuntimeError(f"Bot {name} did not complete the game.")
 
                 if show:
-                    print_inline_game(self.game, name)
+                    print_inline_game(bot_game, name)
 
                 self.stats[bot].append(
                     BotTester.Result(
-                        self.game.get_state() == Game.State.WIN,
-                        self.game.attempts_used(),
+                        bot_game.get_state() == Game.State.WIN,
+                        bot_game.attempts_used(),
                     )
                 )
         self.summary()
